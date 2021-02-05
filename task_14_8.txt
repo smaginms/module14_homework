@@ -1,0 +1,120 @@
+/*
+HTML
+*/
+
+
+<h1>Final Round</h1>
+
+<input class="inp" id="input" type="number" min="1" max="10"> Номер страницы</input>
+<br></br>
+<input class="inp" id="input2" type="number" min="1" max="10"> Лимит</input>
+<br></br>
+<button class="btn j-btn">Запрос</button>
+
+<div id="message"></div>
+
+<div id="image"></div>
+	
+
+
+
+/*
+CSS
+*/
+
+
+.btn {
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  
+  margin: 5px 10px;
+  padding: 10px 15px;
+  border-radius: 1px;
+  font-size: 12px;
+  line-height: 15px;
+  text-transform: uppercase;
+  color: white;
+  background: #315efb;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  box-shadow: 0px 2px 8px 2px rgba(141,150,178,.3);
+  transform: scale(1.05);
+}
+.inp{
+width: 50px;
+height: 30px;
+border-radius: 5px;
+border:2px solid #7C5961;
+}
+
+
+/*
+JS
+*/
+	
+const btn = document.querySelector('.j-btn');
+
+btn.addEventListener('click', () => {
+  let page = document.getElementById("input").value;
+  let lim = document.getElementById("input2").value;
+  let showImg = document.getElementById("image");
+  let checkPage = 1;
+  let checkLim = 1;
+  
+
+  // Проверка страницы
+  if ( page < 1 || page > 10 ) {
+    checkPage = 0;
+  }
+  //  Проверка лимита
+  if ( lim < 1 || lim > 10 ) {
+    checkLim = 0;
+  }
+  //  console.log(lim,checkLim);
+  // alerts
+  if ( checkPage === 0 && checkLim === 0 ) {
+    alert('Номер страницы и лимит вне диапазона от 1 до 10');
+  } else if ( checkPage == 0 ) {
+    alert('Номер страницы вне диапазона от 1 до 10');
+  } else if ( checkLim == 0 ) {
+    alert('Лимит вне диапазона от 1 до 10');
+  } else {
+   //alert('+');
+   // Получение картинки
+   fetch(`https://picsum.photos/v2/list?page=${page}&limit=${lim}`)
+    .then((response) => response.json())
+    .then((data) => {
+                        let images = "";
+
+                        data.forEach(item => {
+                            let imageBlock =  `
+                                <div class="card">
+                                <img
+                                src="${item.download_url}"
+                                class="images"
+                                />
+                                </div>
+                            `;
+                            images += imageBlock
+                            });
+
+                        // Запись в память
+                        localStorage.setItem("images", images);
+                        showImg.innerHTML = images;
+
+                    })
+  }
+  });
+
+/*
+После получения данных вывести список картинок на экран.
+
+Если пользователь перезагрузил страницу, то ему должны показываться картинки из последнего успешно выполненного запроса (использовать localStorage).
+*/
